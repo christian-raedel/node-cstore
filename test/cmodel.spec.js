@@ -128,3 +128,92 @@ describe('CModel:find', function() {
         expect(items).to.be.deep.equal(data);
     });
 });
+
+describe('CModel.update', function() {
+    var model = null, data = null;
+
+    beforeEach(function() {
+        model = new CModel({name: '$inge'});
+        data = [
+            model.insert({dress: '$noir', size: 27, material: 'silk'}),
+            model.insert({dress: '$amour', size: 27, material: 'air'}),
+            model.insert({dress: '$work', size: 32, material: 'cord'})
+        ];
+    });
+
+    afterEach(function() {
+        model = null; data = null;
+    });
+
+    it('should update an item by a single property', function() {
+        var items = model.update({dress: '$noir'}, {dress: '$amour'});
+        expect(items.length).to.be.equal(1);
+        expect(items[0]['_id']).to.be.equal(data[0]['_id']);
+        expect(items[0].dress).to.be.equal('$amour');
+        expect(items[0].size).to.be.equal(27);
+        expect(items[0].material).to.be.equal('silk');
+        expect(model.data.slice(0, 1)).to.be.deep.equal(items);
+    });
+
+    it('should update multiple items by a query', function() {
+        var items = model.update({size: {'$eq': 27}}, {material: 'air'});
+        expect(items.length).to.be.equal(2);
+        expect(items[0].material).to.be.equal('air');
+        expect(items[1].material).to.be.equal('air');
+    });
+
+    it('should emit event on update', function() {
+        function onupdate(updated) {
+            expect(updated.length).to.be.equal(2);
+            expect(updated[0].size).to.be.equal(32);
+            expect(updated[1].size).to.be.equal(32);
+        }
+        var spy = chai.spy(onupdate);
+        model.on('update', spy);
+
+        model.update({size: 27}, {size: 32});
+        expect(spy).to.have.been.called.once;
+    });
+});
+
+describe('CModel.delete', function() {
+    var model = null, data = null;
+
+    beforeEach(function() {
+        model = new CModel({name: '$inge'});
+        data = [
+            model.insert({dress: '$noir', size: 27, material: 'silk'}),
+            model.insert({dress: '$amour', size: 27, material: 'air'}),
+            model.insert({dress: '$work', size: 32, material: 'cord'})
+        ];
+    });
+
+    afterEach(function() {
+        model = null; data = null;
+    });
+
+    it('should delete an item by a single property', function() {
+        var items = model.delete({dress: '$noir'});
+        expect(items).to.be.deep.equal(data.slice(0, 1));
+        expect(model.data).to.be.deep.equal(data.slice(1, 3));
+    });
+
+    it('should delete multiple items by a query', function() {
+        var items = model.delete({'$or': {size: {'$eq': 27}, material: {'$eq': 'chord'}}});
+        expect(items).to.be.deep.equal(data);
+        expect(model.data).to.be.deep.equal([]);
+    });
+
+    it('should emit event on delete', function() {
+        function ondelete(deleted) {
+            expect(deleted.length).to.be.equal(2);
+            expect(deleted[0].size).to.be.equal(27);
+            expect(deleted[1].size).to.be.equal(27);
+        }
+        var spy = chai.spy(ondelete);
+        model.on('delete', spy);
+
+        model.delete({size: 27});
+        expect(spy).to.have.been.called.once;
+    });
+});
