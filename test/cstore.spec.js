@@ -47,6 +47,7 @@ describe('CStore', function() {
         expect(datastore.commit()).to.be.an.instanceof(CStore);
 
         setTimeout(function() {
+            fs.unlinkSync(filename.concat('.swp'));
             expect(fs.existsSync(filename.concat('.swp'))).to.be.false;
             expect(datastore.models['$inge'].data).to.be.deep.equal(data);
             done();
@@ -69,6 +70,7 @@ describe('CStore', function() {
 
         setTimeout(function() {
             fs.unlinkSync(filename);
+            fs.unlinkSync(filename.concat('.swp'));
             done();
         }, 500);
     });
