@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/christian-raedel/node-cstore.svg?branch=master)](https://travis-ci.org/christian-raedel/node-cstore)
+
 # CStore #
 
 A [node.js](http://nodejs.org) document store with the ability to load from and save to a file,
