@@ -124,6 +124,7 @@ describe('CModel:find', function() {
     });
 
     it('should find items by an $or query', function() {
+        /* jshint -W075 */
         var items = model.find({'$or': {size: {'$eq': 27}, size: {'$eq': 32}}});
         expect(items).to.be.deep.equal(data);
     });

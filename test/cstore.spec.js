@@ -9,8 +9,6 @@ var _ = require('lodash')
 chai.use(spies);
 
 describe('CStore', function() {
-    this.timeout(3000);
-
     it('should instanciates', function() {
         expect(new CStore()).to.be.an.instanceof(CStore);
     });
@@ -73,5 +71,11 @@ describe('CStore', function() {
             fs.unlinkSync(filename);
             done();
         }, 500);
+    });
+
+    it('should get a model by name', function() {
+        var datastore = new CStore().addModel(new CModel({name: '$inge'}))
+            , model = datastore.getModel('$inge');
+        expect(model.config.getValue('name')).to.be.equal('$inge');
     });
 });
