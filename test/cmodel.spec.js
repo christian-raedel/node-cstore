@@ -226,6 +226,12 @@ describe('CModel.delete', function() {
         expect(model.data).to.be.deep.equal([]);
     });
 
+    it('should delete an item by an id', function() {
+        var item = model.deleteById(data[0]['_id']);
+        expect(item).to.be.deep.equal(data[0]);
+        expect(model.data).to.be.deep.equal(data.slice(1, 3));
+    });
+
     it('should emit event on delete', function() {
         function ondelete(deleted) {
             expect(deleted.length).to.be.equal(2);
