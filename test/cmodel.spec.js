@@ -133,6 +133,16 @@ describe('CModel:find', function() {
         var items = model.find({'$or': {size: {'$eq': 27}, size: {'$eq': 32}}});
         expect(items).to.be.deep.equal(data);
     });
+
+    it('should find the first document by a query', function() {
+        var item = model.findOne({size: 27});
+        expect(item).to.be.deep.equal(data[0]);
+    });
+
+    it('should return undefined if nothing found', function() {
+        var item = model.findOne({size: 43});
+        expect(item).to.be.undefined;
+    });
 });
 
 describe('CModel.update', function() {
