@@ -178,6 +178,12 @@ describe('CModel.update', function() {
         expect(items[1].material).to.be.equal('air');
     });
 
+    it('should update an item by id', function() {
+        var item = model.updateById(data[0]['_id'], {material: 'cord'});
+        expect(item.material).to.be.equal('cord');
+        expect(model.data[0]).to.be.deep.equal(item);
+    });
+
     it('should emit event on update', function() {
         function onupdate(updated) {
             expect(updated.length).to.be.equal(2);
