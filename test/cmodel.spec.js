@@ -75,6 +75,11 @@ describe('FindOps', function() {
         expect(ops.$in(3, [1, 2])).to.be.false;
         expect(ops.$in(2, 7)).to.be.undefined;
     });
+
+    it('$regex', function() {
+        expect(ops.$regex('$noir', /.*noir$/)).to.be.true;
+        expect(ops.$regex('$noit', /\$$/)).to.be.false;
+    });
 });
 
 describe('CModel:find', function() {
@@ -119,7 +124,7 @@ describe('CModel:find', function() {
     });
 
     it('should find an item by multiple queries', function() {
-        var items = model.find({size: {'$eq': 27}, material: {'$eq': 'air'}});
+        var items = model.find({size: {'$eq': 27}, material: {'$regex': /ai/}});
         expect(items).to.be.deep.equal(data.slice(1, 2));
     });
 
