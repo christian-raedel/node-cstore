@@ -143,6 +143,27 @@ describe('CModel:find', function() {
         var item = model.findOne({size: 43});
         expect(item).to.be.undefined;
     });
+
+    it('should find items async', function(done) {
+        model.findAsync({size: 27}).then(function(found) {
+            expect(found).to.be.deep.equal(data.slice(0, 2));
+            done();
+        }).catch(done);
+    });
+
+    it('should throw an error on invalid arguments when find async', function(done) {
+        model.findAsync('_id2').catch(function(err) {
+            expect(err).to.be.an.instanceof(TypeError);
+            done();
+        });
+    });
+
+    it('should find an item async', function(done) {
+        model.findOneAsync({size: 27}).then(function(found) {
+            expect(found).to.be.deep.equal(data[0]);
+            done();
+        });
+    });
 });
 
 describe('CModel.update', function() {
@@ -182,6 +203,14 @@ describe('CModel.update', function() {
         var item = model.updateById(data[0]['_id'], {material: 'cord'});
         expect(item.material).to.be.equal('cord');
         expect(model.data[0]).to.be.deep.equal(item);
+    });
+
+    it('should update items async', function(done) {
+        model.updateAsync({size: 27}, {size: 43}).then(function(updated) {
+            expect(updated[0].size).to.be.equal(43);
+            expect(updated[1].size).to.be.equal(43);
+            done();
+        });
     });
 
     it('should emit event on update', function() {
@@ -230,6 +259,13 @@ describe('CModel.delete', function() {
         var item = model.deleteById(data[0]['_id']);
         expect(item).to.be.deep.equal(data[0]);
         expect(model.data).to.be.deep.equal(data.slice(1, 3));
+    });
+
+    it('should delete items async', function(done) {
+        model.deleteAsync({dress: '$amour'}).then(function(deleted) {
+            expect(deleted).to.be.deep.equal(data.slice(1, 2));
+            done();
+        }).catch(done);
     });
 
     it('should emit event on delete', function() {
