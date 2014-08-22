@@ -2,8 +2,8 @@ var _ = require('lodash')
     , chai = require('chai')
     , expect = require('chai').expect
     , spies = require('chai-spies')
-    , ops = require('../lib/find-ops')
-    , CModel = require('../lib/cmodel');
+    , ops = require('../index').findOps
+    , CModel = require('../index').CModel;
 
 chai.use(spies);
 

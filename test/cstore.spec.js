@@ -3,8 +3,8 @@ var _ = require('lodash')
     , expect = require('chai').expect
     , spies = require('chai-spies')
     , fs = require('fs')
-    , CModel = require('../lib/cmodel')
-    , CStore = require('../lib/cstore');
+    , CModel = require('../index').CModel
+    , CStore = require('../index');
 
 chai.use(spies);
 

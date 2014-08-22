@@ -9,7 +9,7 @@ on collections.
 ## Installation ##
 
 ```
-npm install --save git+https://github.com/christian-raedel/node-cstore.git
+npm install --save git+https://github.com/christian-raedel/node-cstore.git#v0.2.0
 ```
 
 ### Testing ###
@@ -32,10 +32,10 @@ online](http://christian-raedel.github.io/node-cstore/index.html)
 ## Basic Usage ##
 
 ``` Javascript
-var cstore = require('node-cstore');
+var CStore = require('node-cstore');
 
-var ds = new cstore.CStore({name: '$appleStore'})
-.addModel(new cstore.CModel({name: '$macBooks'}));
+var ds = new CStore({name: '$appleStore'})
+.addModel(new CStore.CModel({name: '$macBooks'}));
 
 ds.getModel('$macBooks')
 .insert({
