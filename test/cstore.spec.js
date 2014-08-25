@@ -3,25 +3,40 @@ var _ = require('lodash')
     , expect = require('chai').expect
     , spies = require('chai-spies')
     , fs = require('fs')
-    , CModel = require('../index').CModel
-    , CStore = require('../index');
+    , CStore = require('../index')
+    , CSModel = CStore.CSModel
+    , CQModel = CStore.CQModel;
 
 chai.use(spies);
 
 describe('CStore', function() {
     it('should instanciates', function() {
-        expect(new CStore()).to.be.an.instanceof(CStore);
+        var store = new CStore();
+        expect(store).to.be.an.instanceof(CStore);
+        expect(store.classname).to.be.equal('CStore');
+        expect(store.toString()).to.be.equal('CStore [cstore]');
     });
 
     it('should add a model', function() {
-        var datastore = new CStore().addModel(new CModel({name: '$inge'}));
+        var datastore = new CStore().addModel(new CSModel({name: '$inge'}));
         expect(datastore).to.be.an.instanceof(CStore);
-        expect(datastore.models['$inge']).to.be.an.instanceof(CModel);
+        expect(datastore.models['$inge']).to.be.an.instanceof(CSModel);
+    });
+
+    it('should throw an error on adding invalid model class', function(done) {
+        var datastore = new CStore();
+        //expect(datastore.addModel.bind(datastore, new CQModel())).to.throw(/.*cstore.*CQModel/);
+        try {
+            datastore.addModel(new CQModel());
+        } catch (err) {
+            expect(err).to.be.an.instanceof(TypeError);
+            done();
+        }
     });
 
     it('should create a write-stream', function(done) {
         var filename = __dirname + '/test.db'
-            , datastore = new CStore({filename: filename}).addModel(new CModel({name: '$inge'}));
+            , datastore = new CStore({filename: filename}).addModel(new CSModel({name: '$inge'}));
         expect(datastore.stream).to.be.ok;
         expect(datastore['_logger']).to.be.ok;
         datastore.models['$inge'].insert({dress: '$noir'});
@@ -38,7 +53,7 @@ describe('CStore', function() {
 
     it('should commit datastore', function(done) {
         var filename = __dirname + '/test.db'
-            , datastore = new CStore({filename: filename}).addModel(new CModel({name: '$inge'}));
+            , datastore = new CStore({filename: filename}).addModel(new CSModel({name: '$inge'}));
 
         var data = [
             datastore.models['$inge'].insert({dress: '$noir'}),
@@ -56,7 +71,7 @@ describe('CStore', function() {
 
     it('should load and save', function(done) {
         var filename = __dirname + '/test.db'
-            , datastore = new CStore({filename: filename}).addModel(new CModel({name: '$inge'}));
+            , datastore = new CStore({filename: filename}).addModel(new CSModel({name: '$inge'}));
 
         var data = [
             datastore.models['$inge'].insert({dress: '$noir'}),
@@ -76,7 +91,7 @@ describe('CStore', function() {
     });
 
     it('should get a model by name', function() {
-        var datastore = new CStore().addModel(new CModel({name: '$inge'}))
+        var datastore = new CStore().addModel(new CSModel({name: '$inge'}))
             , model = datastore.getModel('$inge');
         expect(model.config.getValue('name')).to.be.equal('$inge');
     });

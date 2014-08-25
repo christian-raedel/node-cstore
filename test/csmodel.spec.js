@@ -8,19 +8,13 @@ var _ = require('lodash')
 chai.use(spies);
 
 describe('CModel', function() {
-    var model = null;
-
-    beforeEach(function() {
-        model = new CModel({name: 'inge'});
-    });
-
     it('should instanciates', function() {
-        expect(model).to.be.an.instanceof(CModel);
-        expect(model.classname).to.be.equal('CModel');
-        expect(model.toString()).to.be.equal('CModel [inge]');
+        expect(new CModel()).to.be.an.instanceof(CModel);
     });
 
     it('should insert new data', function() {
+        var model = new CModel();
+
         function oninsert(data) {
             expect(data['_id']).to.be.ok;
             expect(data.name).to.be.equal('inge');
@@ -31,11 +25,9 @@ describe('CModel', function() {
         expect(spy).to.have.been.called.once;
     });
 
-    it('should throw an error on inserting with invalid arguments', function() {
-        expect(model.insert.bind(model, '_id2')).to.throw(/CModel/);
-    });
-
     it('should find an object by id', function() {
+        var model = new CModel();
+
         var id = model.insert({name: 'inge'})['_id'];
         expect(id).to.be.a('string');
         expect(model.findById(id)).to.be.deep.equal({name: 'inge', _id: id});
