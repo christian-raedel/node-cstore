@@ -17,8 +17,8 @@ describe('CQStore', function() {
 
     it('should add a model', function(done) {
         var datastore = new CQStore();
-        datastore.addModel(new CQModel({name: '$inge'})).then(function(datastore) {
-            expect(datastore).to.be.an.instanceof(CQStore);
+        datastore.addModel(new CQModel({name: '$inge'})).then(function(model) {
+            expect(model).to.be.an.instanceof(CQModel);
             expect(datastore.models['$inge']).to.be.an.instanceof(CQModel);
             done();
         }).catch(done);
@@ -26,7 +26,7 @@ describe('CQStore', function() {
 
     it('should get a model by name', function(done) {
         var datastore = new CQStore();
-        datastore.addModel(new CQModel({name: '$inge'})).then(function(datastore) {
+        datastore.addModel(new CQModel({name: '$inge'})).then(function(model) {
             datastore.getModel('$inge').then(function(model) {
                 expect(model.config.getValue('name')).to.be.equal('$inge');
                 done();
@@ -41,9 +41,9 @@ describe('CQStore:load&save', function() {
 
     beforeEach(function(done) {
         datastore = new CQStore({filename: filename});
-        datastore.addModel(new CQModel({name: '$inge'})).then(function(datastore) {
-            expect(datastore.models['$inge'].insert({dress: '$noir'})).to.be.fulfilled;
-            expect(datastore.models['$inge'].insert({dress: '$amour'})).to.be.fulfilled;
+        datastore.addModel(new CQModel({name: '$inge'})).then(function(model) {
+            expect(model.insert({dress: '$noir'})).to.be.fulfilled;
+            expect(model.insert({dress: '$amour'})).to.be.fulfilled;
             done();
         });
     });
