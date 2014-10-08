@@ -3,17 +3,17 @@ var _ = require('lodash')
     , expect = require('chai').expect
     , spies = require('chai-spies')
     , ops = require('../index').findOps
-    , CModel = require('../index').CModel;
+    , CSModel = require('../index').CSModel;
 
 chai.use(spies);
 
-describe('CModel', function() {
+describe('CSModel', function() {
     it('should instanciates', function() {
-        expect(new CModel()).to.be.an.instanceof(CModel);
+        expect(new CSModel()).to.be.an.instanceof(CSModel);
     });
 
     it('should insert new data', function() {
-        var model = new CModel();
+        var model = new CSModel();
 
         function oninsert(data) {
             expect(data['_id']).to.be.ok;
@@ -26,7 +26,7 @@ describe('CModel', function() {
     });
 
     it('should find an object by id', function() {
-        var model = new CModel();
+        var model = new CSModel();
 
         var id = model.insert({name: 'inge'})['_id'];
         expect(id).to.be.a('string');
@@ -82,11 +82,11 @@ describe('FindOps', function() {
     });
 });
 
-describe('CModel:find', function() {
+describe('CSModel:find', function() {
     var model = null, data = null;
 
     beforeEach(function() {
-        model = new CModel({name: '$inge'});
+        model = new CSModel({name: '$inge'});
         data = [
             model.insert({dress: '$noir', size: 27, material: 'silk'}),
             model.insert({dress: '$amour', size: 27, material: 'air'}),
@@ -143,13 +143,35 @@ describe('CModel:find', function() {
         var item = model.findOne({size: 43});
         expect(item).to.be.undefined;
     });
+
+    it('should return all items on findAll', function () {
+        expect(model.findAll()).to.be.deep.equal(model.data);
+    });
+
+    it('should order find results by a given value', function () {
+        var expected = [
+            model.data[1],
+            model.data[0],
+            model.data[2]
+        ];
+        expect(model.findAnd({size: {'$gt': 0}}).orderBy('dress')).to.be.deep.equal(expected);
+    });
+
+    it('should return all documents sorted by a value', function () {
+        var expected = [
+            model.data[1],
+            model.data[0],
+            model.data[2]
+        ];
+        expect(model.findAllAnd().orderBy('dress')).to.be.deep.equal(expected);
+    });
 });
 
-describe('CModel:update', function() {
+describe('CSModel:update', function() {
     var model = null, data = null;
 
     beforeEach(function() {
-        model = new CModel({name: '$inge'});
+        model = new CSModel({name: '$inge'});
         data = [
             model.insert({dress: '$noir', size: 27, material: 'silk'}),
             model.insert({dress: '$amour', size: 27, material: 'air'}),
@@ -198,11 +220,27 @@ describe('CModel:update', function() {
     });
 });
 
-describe('CModel:delete', function() {
+describe('CSModel:insertOrUpdate', function () {
+    var model = null, data = null;
+
+    before(function () {
+        model = new CSModel({name: '$inge'});
+    });
+
+    it('should insert, if document not in collection', function () {
+        expect(model.insertOrUpdate({id: {'$eq': 27}}, {id: 27})[0]).to.have.property('id', 27);
+    });
+
+    it('should update, if document in collection', function () {
+        expect(model.insertOrUpdate({id: {'$eq': 27}}, {dress: '$noir'})[0]).to.have.property('dress', '$noir');
+    });
+});
+
+describe('CSModel:delete', function() {
     var model = null, data = null;
 
     beforeEach(function() {
-        model = new CModel({name: '$inge'});
+        model = new CSModel({name: '$inge'});
         data = [
             model.insert({dress: '$noir', size: 27, material: 'silk'}),
             model.insert({dress: '$amour', size: 27, material: 'air'}),
